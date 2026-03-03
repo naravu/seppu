@@ -7,7 +7,7 @@ from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 
 # 1. Page Config & Responsive CSS
-st.set_page_config(page_title="Indic Voice AI", page_icon="🎙️", layout="centered")
+st.set_page_config(page_title="Seppuga AI", page_icon="🎙️", layout="centered")
 
 st.markdown("""
     <style>
