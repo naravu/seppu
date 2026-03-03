@@ -49,7 +49,7 @@ async def generate_voice(text, voice_name):
     return output_path
 
 # 4. App UI
-st.title("🎙️ Indic Voice AI")
+st.title("🎙️ Seppuga AI")
 
 # Sidebar for Voice Selection
 with st.sidebar:
