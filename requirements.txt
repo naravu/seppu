@@ -1,3 +1,5 @@
 streamlit
 gTTS
 edge_tts
+deep_translator
+indic_transliteration
