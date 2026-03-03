@@ -44,7 +44,7 @@ LANG_MAP = {
 }
 
 # 4. App UI
-st.title("🎙️ Indic Voice AI")
+st.title("🎙️ Seppuga")
 st.caption("Translate, Transliterate & Speak in Indian Languages")
 
 # Responsive columns
