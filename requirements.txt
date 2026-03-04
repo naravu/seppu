@@ -11,6 +11,7 @@ transformers
 diffusers
 accelerate
 Pillow
+StableDiffusionPipeline
 
 # Translation & Transliteration
 deep-translator
