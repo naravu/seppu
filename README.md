@@ -77,10 +77,3 @@ streamlit run app.py
     Connect your repo and deploy.
 
     Enjoy your AI app in the browser!
-
-
----
-
-This README is **GitHub‑ready**: it explains what the project does, how to install and run it, and how to deploy.  
-
-Would you like me to also prepare a **requirements.txt** file alongside this README so you can commit both together for a streamlined setup?
