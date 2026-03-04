@@ -1,5 +1,17 @@
+# Web Framework
 streamlit
-gTTS
-edge_tts
-deep_translator
-indic_transliteration
+
+# Text to Speech & Audio
+edge-tts
+asyncio
+
+# AI Image Generation
+torch
+transformers
+diffusers
+accelerate
+Pillow
+
+# Translation & Transliteration
+deep-translator
+indic-transliteration
