@@ -1,0 +1,7 @@
+streamlit
+edge-tts
+torch
+diffusers
+deep-translator
+indic-transliteration
+Pillow
