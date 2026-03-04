@@ -5,3 +5,6 @@ diffusers
 deep-translator
 indic-transliteration
 Pillow
+transformers
+safetensors
+accelerate
