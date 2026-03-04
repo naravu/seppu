@@ -1,31 +1,36 @@
-# 🎙️ Indic Voice AI: Translate, Transliterate & Speak
+# 🎙️ Seppuga AI
 
-A responsive, mobile-friendly web application that allows users to translate or transliterate text into major Indian languages and generate high-quality AI voices (Male & Female).
+Seppuga AI is a **Streamlit application** that brings together multilingual **Text‑to‑Speech** and **Text‑to‑Image** generation in one simple interface.  
+It leverages **Microsoft Edge TTS**, **Stable Diffusion**, and **Google Translator** to create audio and visuals from user input.
 
-## 🌟 Key Features
-- **🌍 Multi-Language Support**: English, Hindi, Tamil, Telugu, Kannada, and Malayalam.
-- **🗣️ Dual Voice Options**: High-quality Neural Male and Female voices for every language.
-- **🔄 Smart Translation**: Type in English and automatically translate to your target language.
-- **⌨️ Phonetic Transliteration**: Type how words sound (e.g., "Namaste") to get native script (नमस्ते).
-- **📱 Responsive Design**: Fully optimized for Desktop, Tablets, and Mobile screens.
-- **📥 Downloadable Audio**: Generate and download speech as MP3 files.
+---
 
-## 🚀 Quick Start
+## ✨ Features
 
-### 1. Prerequisites
-Ensure you have **Python 3.8+** installed on your system.
+- 🔊 **Text‑to‑Speech**
+  - Supports multiple Indian languages (Hindi, Tamil, Telugu, Kannada, Malayalam) and English.
+  - Choice of **male/female neural voices**.
+  - Input modes:
+    - Translate from English
+    - Transliterate (phonetic typing)
+  - Instant playback and MP3 download.
 
-### 2. Installation
-Clone the repository and install the required dependencies:
+- 🎨 **Text‑to‑Image**
+  - Generate AI images using **Stable Diffusion v1.5**.
+  - Works on both CPU and GPU (optimized for CUDA if available).
+  - Download generated images as PNG.
+
+- 🛠️ **Optimizations**
+  - Cached translators and pipelines for faster performance.
+  - Responsive UI with custom CSS styling.
+  - Error handling and user‑friendly messages.
+
+---
+
+## 📦 Installation
+
+Clone the repository:
 
 ```bash
-git clone https://github.com
-cd YOUR_REPO_NAME
-pip install -r requirements.txt
-```
-streamlit run app.py
-
-├── app.py              # Main Streamlit application code
-├── requirements.txt    # List of Python dependencies
-└── README.md           # Project documentation
-
+git clone https://github.com/your-username/seppuga-ai.git
+cd seppuga-ai
