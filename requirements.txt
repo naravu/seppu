@@ -8,3 +8,4 @@ Pillow
 transformers
 safetensors
 accelerate
+ping3
