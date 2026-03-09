@@ -9,18 +9,22 @@ download_type = st.radio("Choose download type:", ["Video", "Audio"])
 if st.button("Download"):
     if url:
         try:
-            ydl_opts = {}
+            ydl_opts = {
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+                }
+            }
             if download_type == "Audio":
-                ydl_opts = {
+                ydl_opts.update({
                     'format': 'bestaudio/best',
                     'postprocessors': [{
                         'key': 'FFmpegExtractAudio',
                         'preferredcodec': 'mp3',
                         'preferredquality': '192',
                     }],
-                }
+                })
             else:
-                ydl_opts = {'format': 'best'}
+                ydl_opts.update({'format': 'best'})
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
