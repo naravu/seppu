@@ -10,5 +10,4 @@ safetensors
 accelerate
 ping3
 #youtube download
-streamlit>=1.20
 git+https://github.com/yt-dlp/yt-dlp.git@master
