@@ -11,3 +11,4 @@ accelerate
 ping3
 #youtube download
 pytube
+git+https://github.com/pytube/pytube
