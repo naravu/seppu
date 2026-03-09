@@ -1,26 +1,30 @@
 import streamlit as st
-from pytube import YouTube
+import yt_dlp
 
-st.title("🎥 Simple YouTube Downloader")
+st.title("🎥 YouTube Downloader (yt-dlp)")
 
-# Input fields
 url = st.text_input("Enter YouTube video URL:")
 download_type = st.radio("Choose download type:", ["Video", "Audio"])
 
 if st.button("Download"):
     if url:
         try:
-            yt = YouTube(url)
-            st.write(f"**Title:** {yt.title}")
-            st.write("Fetching stream...")
-
-            if download_type == "Video":
-                stream = yt.streams.get_highest_resolution()
+            ydl_opts = {}
+            if download_type == "Audio":
+                ydl_opts = {
+                    'format': 'bestaudio/best',
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '192',
+                    }],
+                }
             else:
-                stream = yt.streams.filter(only_audio=True).first()
+                ydl_opts = {'format': 'best'}
 
-            st.write("Downloading...")
-            stream.download()
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+
             st.success("✅ Download completed! File saved in current directory.")
         except Exception as e:
             st.error(f"Error: {e}")
