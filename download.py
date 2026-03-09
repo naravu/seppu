@@ -5,6 +5,7 @@ st.title("🎥 YouTube Downloader (yt-dlp)")
 
 url = st.text_input("Enter YouTube video URL:")
 download_type = st.radio("Choose download type:", ["Video", "Audio"])
+cookie_file = st.text_input("Optional: Path to cookies.txt")
 
 if st.button("Download"):
     if url:
@@ -14,6 +15,9 @@ if st.button("Download"):
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
                 }
             }
+            if cookie_file:
+                ydl_opts['cookiefile'] = cookie_file
+
             if download_type == "Audio":
                 ydl_opts.update({
                     'format': 'bestaudio/best',
