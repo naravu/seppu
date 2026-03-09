@@ -10,4 +10,4 @@ safetensors
 accelerate
 ping3
 #youtube download
-git+https://github.com/yt-dlp/yt-dlp.git@master
+pytube
