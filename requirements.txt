@@ -12,3 +12,4 @@ ping3
 #youtube download
 pytube
 git+https://github.com/pytube/pytube
+yt-dlp>=2025.2.9
