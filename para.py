@@ -34,7 +34,7 @@ async def generate_audio(text, voice="en-US-AriaNeural", filename="paraphrase_au
     return filename
 
 # --- Streamlit UI ---
-st.title("📝 Simple Paraphraser WebApp with Audio")
+st.title("📝 Simple Paraphraser with Audio")
 st.write("Enter a paragraph below, get a synonym-based paraphrase, play the audio, and download it.")
 
 # Text input area
