@@ -13,3 +13,6 @@ ping3
 pytube
 git+https://github.com/pytube/pytube
 yt-dlp>=2025.2.9
+#paraphrase
+streamlit>=1.30.0
+nltk>=3.8.1
