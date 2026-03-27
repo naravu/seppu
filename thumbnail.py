@@ -37,8 +37,8 @@ except OSError:
     st.warning("Could not load Tamil font, using default.")
     tam_font = ImageFont.load_default()
 
-# Base image with chosen background color
-img = Image.new("RGB", (1280, 720), color=bg_color)  # YouTube recommended size
+# Base image with chosen background color (YouTube recommended size)
+img = Image.new("RGB", (1280, 720), color=bg_color)
 draw = ImageDraw.Draw(img)
 
 # Calculate positions based on alignment
