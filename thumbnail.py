@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageFilter
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 
-st.title("🎨 Thumbnail Generator (English + Tamil, 4K + Filters + Templates)")
+st.title("🎨 Thumbnail Generator (English + Tamil, 4K + Effects)")
 
 # Inputs
 english_text = st.text_input("Enter English text", "Hello World")
@@ -23,10 +23,9 @@ if use_transliteration:
 else:
     tamil_text = raw_tamil_input
 
-# Background type as combo box
+# Background type
 bg_option = st.selectbox("Background type", ["Solid Color", "Upload Image", "Template Gallery"])
-bg_color = None
-bg_image = None
+bg_color, bg_image = None, None
 
 if bg_option == "Solid Color":
     bg_color = st.color_picker("Pick background color", "#ffffff")
@@ -55,82 +54,56 @@ use_overlay = st.checkbox("Add text overlay boxes", value=True)
 overlay_color = st.color_picker("Overlay color", "#000000")
 overlay_opacity = st.slider("Overlay opacity (0-255)", 50, 255, 120)
 
-# Font size sliders (scaled for 4K)
+# Font size sliders
 eng_size = st.slider("English font size", 60, 240, 120)
 tam_size = st.slider("Tamil font size", 60, 240, 120)
 
 # Alignment dropdown
 alignment = st.selectbox("Text alignment", ["Left", "Center", "Right"])
 
-# Image filter options
-filter_choice = st.selectbox("Apply image filter", ["None", "Blur", "Sharpen", "Brightness Boost", "Contrast Boost", "Vignette"])
+# Text effects
+effect_choice = st.selectbox("Text effect", ["None", "Shadow", "Outline", "Glow"])
+effect_color = st.color_picker("Effect color", "#ffffff")
 
 # Font paths
 eng_font_path = os.path.join(os.path.dirname(__file__), "fonts", "Arial.ttf")
 tam_font_path = os.path.join(os.path.dirname(__file__), "fonts", "NotoSansTamil-Regular.ttf")
 
 # Load fonts safely
-try:
-    eng_font = ImageFont.truetype(eng_font_path, eng_size)
-except OSError:
-    st.warning("Could not load English font, using default.")
-    eng_font = ImageFont.load_default()
+def load_font(path, size):
+    try:
+        return ImageFont.truetype(path, size)
+    except OSError:
+        st.warning(f"Could not load font {path}, using default.")
+        return ImageFont.load_default()
 
-try:
-    tam_font = ImageFont.truetype(tam_font_path, tam_size)
-except OSError:
-    st.warning("Could not load Tamil font, using default.")
-    tam_font = ImageFont.load_default()
+eng_font = load_font(eng_font_path, eng_size)
+tam_font = load_font(tam_font_path, tam_size)
 
 # Base image
-if bg_image:
-    img = bg_image.copy()
-else:
-    img = Image.new("RGB", (3840, 2160), color=bg_color or "#ffffff")
-
-# Apply filters
-if filter_choice == "Blur":
-    img = img.filter(ImageFilter.GaussianBlur(5))
-elif filter_choice == "Sharpen":
-    img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
-elif filter_choice == "Brightness Boost":
-    enhancer = ImageEnhance.Brightness(img)
-    img = enhancer.enhance(1.3)
-elif filter_choice == "Contrast Boost":
-    enhancer = ImageEnhance.Contrast(img)
-    img = enhancer.enhance(1.5)
-elif filter_choice == "Vignette":
-    vignette = Image.radial_gradient("L").resize(img.size)
-    vignette = vignette.point(lambda p: 255 - p)  # invert gradient
-    img.putalpha(vignette)
-
+img = bg_image.copy() if bg_image else Image.new("RGB", (3840, 2160), color=bg_color or "#ffffff")
 draw = ImageDraw.Draw(img)
 
 # Helper: get text width/height
 def get_text_size(text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
-    width = bbox[2] - bbox[0]
-    height = bbox[3] - bbox[1]
-    return width, height
+    return bbox[2] - bbox[0], bbox[3] - bbox[1]
 
-# Calculate positions (scaled for 4K)
-if alignment == "Center":
+# Positioning
+def get_positions():
     w, h = img.size
     eng_w, eng_h = get_text_size(english_text, eng_font)
     tam_w, tam_h = get_text_size(tamil_text, tam_font)
-    eng_pos = ((w - eng_w) // 2, 600)
-    tam_pos = ((w - tam_w) // 2, 1200)
-elif alignment == "Right":
-    w, h = img.size
-    eng_w, eng_h = get_text_size(english_text, eng_font)
-    tam_w, tam_h = get_text_size(tamil_text, tam_font)
-    eng_pos = (w - eng_w - 100, 600)
-    tam_pos = (w - tam_w - 100, 1200)
-else:  # Left
-    eng_pos = (100, 600)
-    tam_pos = (100, 1200)
+    if alignment == "Center":
+        return ((w - eng_w) // 2, 600), ((w - tam_w) // 2, 1200)
+    elif alignment == "Right":
+        return (w - eng_w - 100, 600), (w - tam_w - 100, 1200)
+    else:
+        return (100, 600), (100, 1200)
 
-# Draw overlay boxes if enabled
+eng_pos, tam_pos = get_positions()
+
+# Overlay boxes
 def draw_overlay(pos, text, font):
     if use_overlay:
         w, h = get_text_size(text, font)
@@ -141,12 +114,27 @@ def draw_overlay(pos, text, font):
 draw_overlay(eng_pos, english_text, eng_font)
 draw_overlay(tam_pos, tamil_text, tam_font)
 
-# Draw text
-draw.text(eng_pos, english_text, font=eng_font, fill=fg_color)
-draw.text(tam_pos, tamil_text, font=tam_font, fill=fg_color)
+# Text effects
+def draw_text_with_effect(pos, text, font, fill):
+    x, y = pos
+    if effect_choice == "Shadow":
+        draw.text((x+4, y+4), text, font=font, fill=effect_color)
+    elif effect_choice == "Outline":
+        for dx in [-2, 0, 2]:
+            for dy in [-2, 0, 2]:
+                if dx != 0 or dy != 0:
+                    draw.text((x+dx, y+dy), text, font=font, fill=effect_color)
+    elif effect_choice == "Glow":
+        for radius in range(8, 20, 4):
+            draw.text((x, y), text, font=font, fill=effect_color)
+    draw.text(pos, text, font=font, fill=fill)
+
+# Draw text with effects
+draw_text_with_effect(eng_pos, english_text, eng_font, fg_color)
+draw_text_with_effect(tam_pos, tamil_text, tam_font, fg_color)
 
 # Show preview
-st.image(img, caption="Generated 4K Thumbnail with Filters/Templates")
+st.image(img, caption="Generated 4K Thumbnail with Text Effects")
 
 # Save to memory buffer for download
 buf = io.BytesIO()
