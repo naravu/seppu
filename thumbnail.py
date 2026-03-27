@@ -9,8 +9,8 @@ st.title("🎨 Thumbnail Generator (English + Tamil)")
 english_text = st.text_input("Enter English text", "Hello World")
 tamil_text = st.text_input("Enter Tamil text", "வணக்கம் உலகம்")
 
-# Background options
-bg_option = st.radio("Background type", ["Solid Color", "Upload Image", "Template"])
+# Background type as combo box
+bg_option = st.selectbox("Background type", ["Solid Color", "Upload Image", "Template"])
 bg_color = None
 bg_image = None
 
