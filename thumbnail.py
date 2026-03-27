@@ -2,12 +2,26 @@ import os
 import io
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
+from indic_transliteration import sanscript
+from indic_transliteration.sanscript import transliterate
 
-st.title("🎨 Thumbnail Generator (English + Tamil)")
+st.title("🎨 Thumbnail Generator (English + Tamil with Transliteration)")
 
 # Inputs
 english_text = st.text_input("Enter English text", "Hello World")
-tamil_text = st.text_input("Enter Tamil text", "வணக்கம் உலகம்")
+
+# Tamil input with transliteration option
+use_transliteration = st.checkbox("Enable Tamil transliteration")
+raw_tamil_input = st.text_input("Enter Tamil text (or transliteration)", "vanakkam ulagam")
+
+if use_transliteration:
+    try:
+        tamil_text = transliterate(raw_tamil_input, sanscript.ITRANS, sanscript.TAMIL)
+    except Exception:
+        st.warning("Could not transliterate, using raw input.")
+        tamil_text = raw_tamil_input
+else:
+    tamil_text = raw_tamil_input
 
 # Background type as combo box
 bg_option = st.selectbox("Background type", ["Solid Color", "Upload Image", "Template"])
