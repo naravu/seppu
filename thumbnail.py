@@ -1,11 +1,11 @@
 import os
 import io
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageFilter
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 
-st.title("🎨 Thumbnail Generator (English + Tamil, 4K Ready)")
+st.title("🎨 Thumbnail Generator (English + Tamil, 4K + Filters + Templates)")
 
 # Inputs
 english_text = st.text_input("Enter English text", "Hello World")
@@ -24,7 +24,7 @@ else:
     tamil_text = raw_tamil_input
 
 # Background type as combo box
-bg_option = st.selectbox("Background type", ["Solid Color", "Upload Image", "Template"])
+bg_option = st.selectbox("Background type", ["Solid Color", "Upload Image", "Template Gallery"])
 bg_color = None
 bg_image = None
 
@@ -34,14 +34,18 @@ elif bg_option == "Upload Image":
     uploaded_file = st.file_uploader("Upload background image", type=["png", "jpg", "jpeg"])
     if uploaded_file:
         bg_image = Image.open(uploaded_file).convert("RGB").resize((3840, 2160))
-elif bg_option == "Template":
-    template_choice = st.selectbox("Choose a template", ["Gradient Blue", "Dark Theme", "Sunset"])
+elif bg_option == "Template Gallery":
+    template_choice = st.selectbox("Choose a template", ["Gradient Blue", "Dark Theme", "Sunset", "Cinematic", "Minimal White"])
     if template_choice == "Gradient Blue":
         bg_image = Image.linear_gradient("L").resize((3840, 2160)).convert("RGB")
     elif template_choice == "Dark Theme":
         bg_image = Image.new("RGB", (3840, 2160), color="#111111")
     elif template_choice == "Sunset":
         bg_image = Image.radial_gradient("L").resize((3840, 2160)).convert("RGB")
+    elif template_choice == "Cinematic":
+        bg_image = Image.new("RGB", (3840, 2160), color="#222222").filter(ImageFilter.GaussianBlur(20))
+    elif template_choice == "Minimal White":
+        bg_image = Image.new("RGB", (3840, 2160), color="#fdfdfd")
 
 # Foreground text color
 fg_color = st.color_picker("Pick text color", "#000000")
@@ -57,6 +61,9 @@ tam_size = st.slider("Tamil font size", 60, 240, 120)
 
 # Alignment dropdown
 alignment = st.selectbox("Text alignment", ["Left", "Center", "Right"])
+
+# Image filter options
+filter_choice = st.selectbox("Apply image filter", ["None", "Blur", "Sharpen", "Brightness Boost", "Contrast Boost", "Vignette"])
 
 # Font paths
 eng_font_path = os.path.join(os.path.dirname(__file__), "fonts", "Arial.ttf")
@@ -80,6 +87,22 @@ if bg_image:
     img = bg_image.copy()
 else:
     img = Image.new("RGB", (3840, 2160), color=bg_color or "#ffffff")
+
+# Apply filters
+if filter_choice == "Blur":
+    img = img.filter(ImageFilter.GaussianBlur(5))
+elif filter_choice == "Sharpen":
+    img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
+elif filter_choice == "Brightness Boost":
+    enhancer = ImageEnhance.Brightness(img)
+    img = enhancer.enhance(1.3)
+elif filter_choice == "Contrast Boost":
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(1.5)
+elif filter_choice == "Vignette":
+    vignette = Image.radial_gradient("L").resize(img.size)
+    vignette = vignette.point(lambda p: 255 - p)  # invert gradient
+    img.putalpha(vignette)
 
 draw = ImageDraw.Draw(img)
 
@@ -123,7 +146,7 @@ draw.text(eng_pos, english_text, font=eng_font, fill=fg_color)
 draw.text(tam_pos, tamil_text, font=tam_font, fill=fg_color)
 
 # Show preview
-st.image(img, caption="Generated 4K Thumbnail")
+st.image(img, caption="Generated 4K Thumbnail with Filters/Templates")
 
 # Save to memory buffer for download
 buf = io.BytesIO()
