@@ -19,3 +19,4 @@ nltk>=3.8.1
 pydub>=0.25.1
 audioop-lts; python_version >= '3.13'
 ffmpeg
+streamlit-drawable-canvas
