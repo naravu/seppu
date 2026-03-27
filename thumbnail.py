@@ -41,17 +41,24 @@ except OSError:
 img = Image.new("RGB", (1280, 720), color=bg_color)
 draw = ImageDraw.Draw(img)
 
+# Helper: get text width/height using textbbox
+def get_text_size(text, font):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    width = bbox[2] - bbox[0]
+    height = bbox[3] - bbox[1]
+    return width, height
+
 # Calculate positions based on alignment
 if alignment == "Center":
     w, h = img.size
-    eng_w, _ = draw.textsize(english_text, font=eng_font)
-    tam_w, _ = draw.textsize(tamil_text, font=tam_font)
+    eng_w, eng_h = get_text_size(english_text, eng_font)
+    tam_w, tam_h = get_text_size(tamil_text, tam_font)
     eng_pos = ((w - eng_w) // 2, 200)
     tam_pos = ((w - tam_w) // 2, 400)
 elif alignment == "Right":
-    w, _ = img.size
-    eng_w, _ = draw.textsize(english_text, font=eng_font)
-    tam_w, _ = draw.textsize(tamil_text, font=tam_font)
+    w, h = img.size
+    eng_w, eng_h = get_text_size(english_text, eng_font)
+    tam_w, tam_h = get_text_size(tamil_text, tam_font)
     eng_pos = (w - eng_w - 50, 200)
     tam_pos = (w - tam_w - 50, 400)
 else:  # Left
@@ -63,7 +70,7 @@ draw.text(eng_pos, english_text, font=eng_font, fill=fg_color)
 draw.text(tam_pos, tamil_text, font=tam_font, fill=fg_color)
 
 # Show preview
-st.image(img, caption="Generated Thumbnail", use_column_width=True)
+st.image(img, caption="Generated Thumbnail")
 
 # Save to memory buffer for download
 buf = io.BytesIO()
