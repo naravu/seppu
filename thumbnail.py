@@ -32,6 +32,11 @@ elif bg_option == "Template":
 # Foreground text color
 fg_color = st.color_picker("Pick text color", "#000000")
 
+# Overlay controls
+use_overlay = st.checkbox("Add text overlay boxes", value=True)
+overlay_color = st.color_picker("Overlay color", "#000000")
+overlay_opacity = st.slider("Overlay opacity (0-255)", 50, 255, 120)
+
 # Font size sliders
 eng_size = st.slider("English font size", 30, 120, 60)
 tam_size = st.slider("Tamil font size", 30, 120, 60)
@@ -87,6 +92,17 @@ elif alignment == "Right":
 else:  # Left
     eng_pos = (50, 200)
     tam_pos = (50, 400)
+
+# Draw overlay boxes if enabled
+def draw_overlay(pos, text, font):
+    if use_overlay:
+        w, h = get_text_size(text, font)
+        x, y = pos
+        box = Image.new("RGBA", (w + 20, h + 20), overlay_color + f"{overlay_opacity:02x}")
+        img.paste(box, (x - 10, y - 10), box)
+
+draw_overlay(eng_pos, english_text, eng_font)
+draw_overlay(tam_pos, tamil_text, tam_font)
 
 # Draw text
 draw.text(eng_pos, english_text, font=eng_font, fill=fg_color)
