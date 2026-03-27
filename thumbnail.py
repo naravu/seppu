@@ -9,15 +9,34 @@ st.title("🎨 Thumbnail Generator (English + Tamil)")
 english_text = st.text_input("Enter English text", "Hello World")
 tamil_text = st.text_input("Enter Tamil text", "வணக்கம் உலகம்")
 
-# Modern color controls
-bg_color = st.color_picker("Pick background color", "#ffffff")
+# Background options
+bg_option = st.radio("Background type", ["Solid Color", "Upload Image", "Template"])
+bg_color = None
+bg_image = None
+
+if bg_option == "Solid Color":
+    bg_color = st.color_picker("Pick background color", "#ffffff")
+elif bg_option == "Upload Image":
+    uploaded_file = st.file_uploader("Upload background image", type=["png", "jpg", "jpeg"])
+    if uploaded_file:
+        bg_image = Image.open(uploaded_file).convert("RGB").resize((1280, 720))
+elif bg_option == "Template":
+    template_choice = st.selectbox("Choose a template", ["Gradient Blue", "Dark Theme", "Sunset"])
+    if template_choice == "Gradient Blue":
+        bg_image = Image.linear_gradient("L").resize((1280, 720)).convert("RGB")
+    elif template_choice == "Dark Theme":
+        bg_image = Image.new("RGB", (1280, 720), color="#111111")
+    elif template_choice == "Sunset":
+        bg_image = Image.radial_gradient("L").resize((1280, 720)).convert("RGB")
+
+# Foreground text color
 fg_color = st.color_picker("Pick text color", "#000000")
 
 # Font size sliders
 eng_size = st.slider("English font size", 30, 120, 60)
 tam_size = st.slider("Tamil font size", 30, 120, 60)
 
-# Alignment dropdown (combo box)
+# Alignment dropdown
 alignment = st.selectbox("Text alignment", ["Left", "Center", "Right"])
 
 # Font paths
@@ -37,18 +56,22 @@ except OSError:
     st.warning("Could not load Tamil font, using default.")
     tam_font = ImageFont.load_default()
 
-# Base image with chosen background color (YouTube recommended size)
-img = Image.new("RGB", (1280, 720), color=bg_color)
+# Base image
+if bg_image:
+    img = bg_image.copy()
+else:
+    img = Image.new("RGB", (1280, 720), color=bg_color or "#ffffff")
+
 draw = ImageDraw.Draw(img)
 
-# Helper: get text width/height using textbbox
+# Helper: get text width/height
 def get_text_size(text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
     width = bbox[2] - bbox[0]
     height = bbox[3] - bbox[1]
     return width, height
 
-# Calculate positions based on alignment
+# Calculate positions
 if alignment == "Center":
     w, h = img.size
     eng_w, eng_h = get_text_size(english_text, eng_font)
