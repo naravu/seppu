@@ -3,33 +3,11 @@ import io
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 
-st.title("🎨 Thumbnail Generator (English + Tamil with Transliteration)")
+st.title("🎨 Thumbnail Generator (English + Tamil)")
 
 # Inputs
 english_text = st.text_input("Enter English text", "Hello World")
-tamil_input = st.text_input("Enter Tamil text (type in English, auto-converts)", "vanakkam")
-
-# Simple transliteration dictionary (expandable)
-translit_map = {
-    "a": "அ", "aa": "ஆ", "i": "இ", "ii": "ஈ",
-    "u": "உ", "uu": "ஊ", "e": "எ", "ee": "ஏ",
-    "ai": "ஐ", "o": "ஒ", "oo": "ஓ", "au": "ஔ",
-    "ka": "க", "nga": "ங", "cha": "ச", "nja": "ஞ",
-    "ta": "ட", "na": "ண", "tha": "த", "nha": "ந",
-    "pa": "ப", "ma": "ம", "ya": "ய", "ra": "ர",
-    "la": "ல", "va": "வ", "zha": "ழ", "lla": "ள",
-    "sha": "ஷ", "sa": "ஸ", "ha": "ஹ"
-}
-
-# Transliteration function
-def transliterate(text):
-    out = text
-    for eng, tam in sorted(translit_map.items(), key=lambda x: -len(x[0])):
-        out = out.replace(eng, tam)
-    return out
-
-# Convert input
-tamil_text = transliterate(tamil_input)
+tamil_text = st.text_input("Enter Tamil text", "வணக்கம் உலகம்")
 
 # Modern color controls
 bg_color = st.color_picker("Pick background color", "#ffffff")
@@ -73,14 +51,14 @@ def get_text_size(text, font):
 # Calculate positions based on alignment
 if alignment == "Center":
     w, h = img.size
-    eng_w, _ = get_text_size(english_text, eng_font)
-    tam_w, _ = get_text_size(tamil_text, tam_font)
+    eng_w, eng_h = get_text_size(english_text, eng_font)
+    tam_w, tam_h = get_text_size(tamil_text, tam_font)
     eng_pos = ((w - eng_w) // 2, 200)
     tam_pos = ((w - tam_w) // 2, 400)
 elif alignment == "Right":
     w, h = img.size
-    eng_w, _ = get_text_size(english_text, eng_font)
-    tam_w, _ = get_text_size(tamil_text, tam_font)
+    eng_w, eng_h = get_text_size(english_text, eng_font)
+    tam_w, tam_h = get_text_size(tamil_text, tam_font)
     eng_pos = (w - eng_w - 50, 200)
     tam_pos = (w - tam_w - 50, 400)
 else:  # Left
