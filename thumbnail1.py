@@ -3,23 +3,23 @@ from streamlit_drawable_canvas import st_canvas
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-st.title("🖌️ WYSIWYG Thumbnail Maker (Enhanced)")
+st.title("🖌️ WYSIWYG Thumbnail Maker (4K Edition)")
 
-# Resolution selector
-resolution = st.selectbox("Choose resolution", ["HD (1280x720)", "2K (2560x1440)", "4K (3840x2160)"])
-res_map = {
-    "HD (1280x720)": (1280, 720),
-    "2K (2560x1440)": (2560, 1440),
-    "4K (3840x2160)": (3840, 2160)
-}
-width, height = res_map[resolution]
+# Fixed resolution: 4K UHD
+width, height = 3840, 2160
 
 # Canvas settings
 bg_color = st.color_picker("Background color", "#ffffff")
-stroke_color = st.color_picker("Stroke color", "#000000")
-stroke_width = st.slider("Stroke width", 1, 10, 2)
 
-# Create interactive canvas (freehand drawing enabled)
+# Brush controls
+stroke_color = st.color_picker("Brush/Text color", "#000000")
+stroke_width = st.slider("Brush size", 1, 50, 5)
+drawing_mode = st.selectbox(
+    "Drawing mode",
+    ["freedraw", "line", "rect", "circle", "transform"]
+)
+
+# Create interactive canvas
 canvas_result = st_canvas(
     fill_color="rgba(255, 255, 255, 0)",  # Transparent fill
     stroke_color=stroke_color,
@@ -27,7 +27,8 @@ canvas_result = st_canvas(
     update_streamlit=True,
     height=height,
     width=width,
-    drawing_mode="freedraw",  # allows drawing with mouse pointer
+    drawing_mode=drawing_mode,
+    stroke_width=stroke_width,
     key="canvas",
 )
 
@@ -36,8 +37,8 @@ english_text = st.text_input("English text", "Hello World")
 tamil_text = st.text_input("Tamil text", "வணக்கம் உலகம்")
 
 # Font sizes
-eng_size = st.slider("English font size", 30, 120, 60)
-tam_size = st.slider("Tamil font size", 30, 120, 60)
+eng_size = st.slider("English font size", 60, 240, 120)
+tam_size = st.slider("Tamil font size", 60, 240, 120)
 
 # Render text on canvas preview
 if canvas_result.image_data is not None:
@@ -55,11 +56,11 @@ if canvas_result.image_data is not None:
     except OSError:
         font_tam = ImageFont.load_default()
 
-    # Draw text (fixed positions, but you can draw freely with mouse too)
-    draw.text((50, height//3), english_text, font=font_eng, fill=stroke_color)
-    draw.text((50, 2*height//3), tamil_text, font=font_tam, fill=stroke_color)
+    # Draw text (positions fixed, but canvas allows free drawing too)
+    draw.text((100, height//3), english_text, font=font_eng, fill=stroke_color)
+    draw.text((100, 2*height//3), tamil_text, font=font_tam, fill=stroke_color)
 
-    st.image(img, caption=f"Thumbnail Preview ({resolution})")
+    st.image(img, caption="Thumbnail Preview (4K UHD)")
 
     # Save to memory buffer for download
     buf = io.BytesIO()
@@ -67,8 +68,8 @@ if canvas_result.image_data is not None:
     byte_im = buf.getvalue()
 
     st.download_button(
-        label=f"⬇️ Download {resolution} Thumbnail",
+        label="⬇️ Download 4K Thumbnail",
         data=byte_im,
-        file_name=f"thumbnail_{resolution.replace(' ', '').lower()}.png",
+        file_name="thumbnail_4k.png",
         mime="image/png"
     )
