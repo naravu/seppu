@@ -20,3 +20,5 @@ pydub>=0.25.1
 audioop-lts; python_version >= '3.13'
 ffmpeg
 streamlit-drawable-canvas
+PySide6
+PyQt5
