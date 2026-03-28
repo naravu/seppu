@@ -3,7 +3,7 @@ from streamlit_drawable_canvas import st_canvas
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-st.title("🖌️ Enhanced WYSIWYG Thumbnail Maker")
+st.title("🖌️ WYSIWYG Thumbnail Maker (Enhanced)")
 
 # Resolution selector
 resolution = st.selectbox("Choose resolution", ["HD (1280x720)", "2K (2560x1440)", "4K (3840x2160)"])
@@ -19,7 +19,7 @@ bg_color = st.color_picker("Background color", "#ffffff")
 stroke_color = st.color_picker("Stroke color", "#000000")
 stroke_width = st.slider("Stroke width", 1, 10, 2)
 
-# Create interactive canvas
+# Create interactive canvas (freehand drawing enabled)
 canvas_result = st_canvas(
     fill_color="rgba(255, 255, 255, 0)",  # Transparent fill
     stroke_color=stroke_color,
@@ -27,7 +27,7 @@ canvas_result = st_canvas(
     update_streamlit=True,
     height=height,
     width=width,
-    drawing_mode="transform",  # allows moving/resizing objects
+    drawing_mode="freedraw",  # allows drawing with mouse pointer
     key="canvas",
 )
 
@@ -55,7 +55,7 @@ if canvas_result.image_data is not None:
     except OSError:
         font_tam = ImageFont.load_default()
 
-    # Draw text (positions can be adjusted later with draggable canvas)
+    # Draw text (fixed positions, but you can draw freely with mouse too)
     draw.text((50, height//3), english_text, font=font_eng, fill=stroke_color)
     draw.text((50, 2*height//3), tamil_text, font=font_tam, fill=stroke_color)
 
