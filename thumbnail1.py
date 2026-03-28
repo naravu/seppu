@@ -3,7 +3,16 @@ from streamlit_drawable_canvas import st_canvas
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-st.title("🖌️ WYSIWYG Thumbnail Maker")
+st.title("🖌️ Enhanced WYSIWYG Thumbnail Maker")
+
+# Resolution selector
+resolution = st.selectbox("Choose resolution", ["HD (1280x720)", "2K (2560x1440)", "4K (3840x2160)"])
+res_map = {
+    "HD (1280x720)": (1280, 720),
+    "2K (2560x1440)": (2560, 1440),
+    "4K (3840x2160)": (3840, 2160)
+}
+width, height = res_map[resolution]
 
 # Canvas settings
 bg_color = st.color_picker("Background color", "#ffffff")
@@ -16,17 +25,17 @@ canvas_result = st_canvas(
     stroke_color=stroke_color,
     background_color=bg_color,
     update_streamlit=True,
-    height=720,
-    width=1280,
-    drawing_mode="freedraw",  # You can also allow "rect", "circle", "line", "transform"
+    height=height,
+    width=width,
+    drawing_mode="transform",  # allows moving/resizing objects
     key="canvas",
 )
 
-# Text input
+# Text inputs
 english_text = st.text_input("English text", "Hello World")
 tamil_text = st.text_input("Tamil text", "வணக்கம் உலகம்")
 
-# Font size
+# Font sizes
 eng_size = st.slider("English font size", 30, 120, 60)
 tam_size = st.slider("Tamil font size", 30, 120, 60)
 
@@ -35,6 +44,7 @@ if canvas_result.image_data is not None:
     img = Image.fromarray(canvas_result.image_data.astype("uint8"))
     draw = ImageDraw.Draw(img)
 
+    # Safe font loading
     try:
         font_eng = ImageFont.truetype("Arial.ttf", eng_size)
     except OSError:
@@ -45,10 +55,11 @@ if canvas_result.image_data is not None:
     except OSError:
         font_tam = ImageFont.load_default()
 
-    draw.text((50, 200), english_text, font=font_eng, fill=stroke_color)
-    draw.text((50, 400), tamil_text, font=font_tam, fill=stroke_color)
+    # Draw text (positions can be adjusted later with draggable canvas)
+    draw.text((50, height//3), english_text, font=font_eng, fill=stroke_color)
+    draw.text((50, 2*height//3), tamil_text, font=font_tam, fill=stroke_color)
 
-    st.image(img, caption="Thumbnail Preview")
+    st.image(img, caption=f"Thumbnail Preview ({resolution})")
 
     # Save to memory buffer for download
     buf = io.BytesIO()
@@ -56,8 +67,8 @@ if canvas_result.image_data is not None:
     byte_im = buf.getvalue()
 
     st.download_button(
-        label="⬇️ Download Thumbnail",
+        label=f"⬇️ Download {resolution} Thumbnail",
         data=byte_im,
-        file_name="thumbnail.png",
+        file_name=f"thumbnail_{resolution.replace(' ', '').lower()}.png",
         mime="image/png"
     )
