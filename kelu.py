@@ -1,10 +1,10 @@
 import streamlit as st
 import speech_recognition as sr
+from pydub import AudioSegment
 import tempfile
 import os
-import audioread
 
-st.title("🎙️ MP3 Speech-to-Text (No FFmpeg)")
+st.title("🎙️ MP3 Speech-to-Text (Classic Python Method)")
 st.write("Upload an MP3 file and get the transcription using SpeechRecognition (Google Web Speech API).")
 
 uploaded_file = st.file_uploader("Choose an MP3 file", type=["mp3"])
@@ -15,12 +15,15 @@ if uploaded_file is not None:
         tmp_file.write(uploaded_file.read())
         mp3_path = tmp_file.name
 
+    # Convert MP3 → WAV using pydub (with ffmpeg-python backend)
+    wav_path = mp3_path.replace(".mp3", ".wav")
+    sound = AudioSegment.from_file(mp3_path, format="mp3")
+    sound.export(wav_path, format="wav")
+
     st.info("Transcribing... please wait.")
 
     recognizer = sr.Recognizer()
-
-    # audioread lets SpeechRecognition handle MP3 directly
-    with sr.AudioFile(mp3_path) as source:
+    with sr.AudioFile(wav_path) as source:
         audio_data = recognizer.record(source)
         try:
             text = recognizer.recognize_google(audio_data)  # No API key needed
@@ -29,7 +32,9 @@ if uploaded_file is not None:
         except sr.RequestError:
             text = "Google Speech API unavailable or network error."
 
+    # Clean up temp files
     os.remove(mp3_path)
+    os.remove(wav_path)
 
     st.subheader("Transcription:")
     st.text_area("Output", text, height=300)
