@@ -22,3 +22,4 @@ ffmpeg
 streamlit-drawable-canvas
 PySide6
 PyQt5
+whisper
