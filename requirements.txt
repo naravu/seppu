@@ -23,3 +23,4 @@ streamlit-drawable-canvas
 PySide6
 PyQt5
 whisper
+git+https://github.com/openai/whisper.git
