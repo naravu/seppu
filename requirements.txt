@@ -24,5 +24,3 @@ PySide6
 PyQt5
 speechrecognition
 imageio-ffmpeg
-pyttsx3
-PyPDF2
